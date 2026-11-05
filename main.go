@@ -1,17 +1,17 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"flag"
-	"strings"
+	"fmt"
 	"ng-dl/scraper"
+	"os"
+	"strings"
 )
 
 func main() {
 	flag.Parse()
 	args := flag.Args()
-	if (len(args) != 1) {
+	if len(args) != 1 {
 		fmt.Println("Usage: ng-dl [options] <url>")
 		os.Exit(1)
 	}
@@ -19,5 +19,5 @@ func main() {
 	if strings.Contains(url, "/audio/listen") {
 		scraper.GetMetadata(url)
 	}
-	
+
 }

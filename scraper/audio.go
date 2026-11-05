@@ -3,12 +3,13 @@ package scraper
 import (
 	"fmt"
 	"github.com/gocolly/colly"
+	"ng-dl/filesystem"
 	"os"
 	"strings"
 )
 
 func GetMetadata(url string) {
-	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright string
+	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink string
 	c := colly.NewCollector(
 		colly.AllowedDomains("newgrounds.com", "audio.ngfiles.com", "www.newgrounds.com"),
 	)
@@ -27,6 +28,7 @@ func GetMetadata(url string) {
 	c.OnHTML("head", func(e *colly.HTMLElement) {
 		metaTitle = e.ChildAttr(`meta[name="title"]`, "content")
 		metaDescription = e.ChildAttr(`meta[property="og:description"]`, "content")
+		downloadLink = e.ChildAttr(`meta[property="og:audio"]`, "content")
 		if metaTitle != title && metaTitle != "" {
 			title = metaTitle
 			fmt.Println("Never mind, song name is", title)
@@ -50,10 +52,11 @@ func GetMetadata(url string) {
 		copyright = e.Text
 		copyright = strings.TrimSpace(copyright)
 	})
-	fmt.Println(title, metaDescription, artist, authorUrl, year, genre, copyright)
 	err := c.Visit(url)
 	if err != nil {
 		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Cannot continue.", err, url)
 		os.Exit(1)
 	}
+	fmt.Println(title, metaDescription, artist, authorUrl, year, genre, copyright, "goog", downloadLink)
+	filesystem.DownloadFileAndSave(downloadLink)
 }

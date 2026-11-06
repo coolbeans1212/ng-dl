@@ -5,11 +5,12 @@ import (
 	"github.com/gocolly/colly"
 	"ng-dl/filesystem"
 	"os"
+	"strconv"
 	"strings"
 )
 
-func GetMetadata(url string) {
-	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink string
+func GetMetadata(url string) filesystem.Song {
+	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink, rating string
 	c := colly.NewCollector(
 		colly.AllowedDomains("newgrounds.com", "audio.ngfiles.com", "www.newgrounds.com"),
 	)
@@ -52,11 +53,26 @@ func GetMetadata(url string) {
 		copyright = e.Text
 		copyright = strings.TrimSpace(copyright)
 	})
+	c.OnHTML("#score_number", func(e *colly.HTMLElement) {
+		rating = e.Text
+	})
 	err := c.Visit(url)
 	if err != nil {
-		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Cannot continue.", err, url)
+		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Cannot continue.\n", err, url)
 		os.Exit(1)
 	}
-	fmt.Println(title, metaDescription, artist, authorUrl, year, genre, copyright, "goog", downloadLink)
-	filesystem.DownloadFileAndSave(downloadLink)
+	fmt.Printf("Fetched metadata for %s\n", title)
+	ratingFloat, err := strconv.ParseFloat(rating, 32)
+	if err != nil {
+		fmt.Println("Fetched rating is invalid. Defaulting to 4.")
+		ratingFloat = 4.0
+	}
+	return filesystem.Song{Title: title, Description: metaDescription, Artist: artist, ArtistURL: authorUrl, Year: year, Genre: genre, Copyright: copyright, DownloadURL: downloadLink, Rating: float32(ratingFloat)}
+}
+
+func DownloadSongAndSaveWithMetadata(url string) {
+	metadata := GetMetadata(url)
+	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL)
+	filesystem.WriteMetadataToMP3File(filepath, metadata)
+	filesystem.RenameMP3File(filepath, metadata)
 }

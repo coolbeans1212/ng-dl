@@ -17,7 +17,13 @@ func main() {
 	}
 	url := args[0]
 	if strings.Contains(url, "/audio/listen") {
-		scraper.GetMetadata(url)
+		scraper.DownloadSongAndSaveWithMetadata(url)
+	} else if strings.Contains(url, "newgrounds.com") {
+		fmt.Println("Unimplemented.")
+		os.Exit(1)
+	} else {
+		fmt.Println("Please provide a valid newgrounds.com link.")
+		os.Exit(1)
 	}
 
 }

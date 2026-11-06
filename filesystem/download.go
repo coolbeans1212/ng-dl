@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-func DownloadFileAndSave(urlStr string) {
+func DownloadFileAndSave(urlStr string) string {
 	var filename string
 	resp, err := http.Get(urlStr)
 	if err != nil {
@@ -36,5 +36,6 @@ func DownloadFileAndSave(urlStr string) {
 	if err != nil {
 		panic(err)
 	}
+	return out
 
 }

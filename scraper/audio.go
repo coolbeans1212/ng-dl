@@ -50,8 +50,17 @@ func GetMetadata(url string) filesystem.Song {
 		genre = e.Text
 	})
 	c.OnHTML(`div#creative_commons div p`, func(e *colly.HTMLElement) {
+		if e.Index != 0 {
+			return
+		}
 		copyright = e.Text
 		copyright = strings.TrimSpace(copyright)
+	})
+	c.OnHTML(`div#creative_commons div dl dt`, func(e *colly.HTMLElement) {
+		if e.Index == 0 {
+			copyright += " Creative Commons: "
+		}
+		copyright += strings.TrimRight(e.Text, ":") + " " //TrimRight because the string is often something like "Attribution:" so we need to remove the ":"
 	})
 	c.OnHTML("#score_number", func(e *colly.HTMLElement) {
 		rating = e.Text

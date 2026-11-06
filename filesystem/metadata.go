@@ -16,6 +16,7 @@ type Song struct {
 	Genre       string
 	Copyright   string
 	DownloadURL string
+	AlbumArtURL string
 	Rating      float32
 }
 
@@ -73,5 +74,25 @@ func RenameMP3File(path string, song Song) {
 	newName := song.Artist + " - " + song.Title + ".mp3"
 	newPath := filepath.Join(directory, newName)
 	fmt.Printf("Renamed file to %s\n", newName)
-	os.Rename(path, newPath)
+	err := os.Rename(path, newPath)
+	if err != nil {
+		fmt.Println("Could not rename the file.")
+	}
+}
+
+func AttachAlbumArt(path string, albumArt []byte) {
+	tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
+	if err != nil {
+		fmt.Printf("Could not open downloaded MP3 file for writing. The MP3 file will not contain any album art (%s).\n", err)
+		return
+	}
+	defer tag.Close()
+	tag.SetVersion(3)
+	encoding := id3v2.EncodingUTF8
+	tag.AddAttachedPicture(id3v2.PictureFrame{Encoding: encoding, MimeType: "image/png", PictureType: id3v2.PTFrontCover, Picture: albumArt})
+	err = tag.Save()
+	if err != nil {
+		fmt.Println("Could not save album art to file. The MP3 file will not contain any album art.")
+	}
+	fmt.Println("Attached album art.")
 }

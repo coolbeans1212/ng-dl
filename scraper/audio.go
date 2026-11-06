@@ -10,7 +10,7 @@ import (
 )
 
 func GetMetadata(url string) filesystem.Song {
-	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink, rating string
+	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink, rating, albumArtURL string
 	c := colly.NewCollector(
 		colly.AllowedDomains("newgrounds.com", "audio.ngfiles.com", "www.newgrounds.com"),
 	)
@@ -65,6 +65,9 @@ func GetMetadata(url string) filesystem.Song {
 	c.OnHTML("#score_number", func(e *colly.HTMLElement) {
 		rating = e.Text
 	})
+	c.OnHTML("img.audio-cover-art", func(e *colly.HTMLElement) {
+		albumArtURL = e.Attr("src")
+	})
 	err := c.Visit(url)
 	if err != nil {
 		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Cannot continue.\n", err, url)
@@ -76,12 +79,14 @@ func GetMetadata(url string) filesystem.Song {
 		fmt.Println("Fetched rating is invalid. Defaulting to 4.")
 		ratingFloat = 4.0
 	}
-	return filesystem.Song{Title: title, Description: metaDescription, Artist: artist, ArtistURL: authorUrl, Year: year, Genre: genre, Copyright: copyright, DownloadURL: downloadLink, Rating: float32(ratingFloat)}
+	return filesystem.Song{Title: title, Description: metaDescription, Artist: artist, ArtistURL: authorUrl, Year: year, Genre: genre, Copyright: copyright, DownloadURL: downloadLink, Rating: float32(ratingFloat), AlbumArtURL: albumArtURL}
 }
 
 func DownloadSongAndSaveWithMetadata(url string) {
 	metadata := GetMetadata(url)
 	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL)
 	filesystem.WriteMetadataToMP3File(filepath, metadata)
+	filesystem.AttachAlbumArt(filepath, filesystem.DownloadAndConvertWebpToPng(metadata.AlbumArtURL))
+
 	filesystem.RenameMP3File(filepath, metadata)
 }

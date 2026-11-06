@@ -1,6 +1,11 @@
 package filesystem
 
 import (
+	"bytes"
+	"fmt"
+	_ "golang.org/x/image/webp"
+	"image"
+	"image/jpeg"
 	"io"
 	"net/http"
 	"net/url"
@@ -38,4 +43,19 @@ func DownloadFileAndSave(urlStr string) string {
 	}
 	return out
 
+}
+
+func DownloadAndConvertWebpToPng(url string) []byte {
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Could not fetch the album art.")
+	}
+	defer resp.Body.Close()
+	img, _, err := image.Decode(resp.Body)
+	if err != nil {
+		fmt.Println("Could not decode the album art.")
+	}
+	var buffer bytes.Buffer
+	err = jpeg.Encode(&buffer, img, &jpeg.Options{Quality: 100})
+	return buffer.Bytes()
 }

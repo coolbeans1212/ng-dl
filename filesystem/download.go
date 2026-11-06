@@ -5,7 +5,7 @@ import (
 	"fmt"
 	_ "golang.org/x/image/webp"
 	"image"
-	"image/jpeg"
+	"image/png"
 	"io"
 	"net/http"
 	"net/url"
@@ -56,6 +56,6 @@ func DownloadAndConvertWebpToPng(url string) []byte {
 		fmt.Println("Could not decode the album art.")
 	}
 	var buffer bytes.Buffer
-	err = jpeg.Encode(&buffer, img, &jpeg.Options{Quality: 100})
+	err = png.Encode(&buffer, img)
 	return buffer.Bytes()
 }

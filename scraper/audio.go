@@ -34,7 +34,6 @@ func GetMetadata(url string) filesystem.Song {
 			title = metaTitle
 			fmt.Println("Never mind, song name is", title)
 		}
-		fmt.Println("Description:", metaDescription)
 	})
 	c.OnHTML("div.item-details-main h4 a", func(e *colly.HTMLElement) {
 		artist = e.Text

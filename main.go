@@ -19,7 +19,7 @@ func main() {
 	switch {
 	case strings.Contains(url, "/audio/listen"):
 		scraper.DownloadSongAndSaveWithMetadata(url)
-	case strings.Contains(url, "/playlist/"):
+	case strings.Contains(url, "/playlist/") || strings.Contains(url, "/series/") || strings.Contains(url, "/collection/"):
 		scraper.DownloadAllSongsInPlaylistWithMetadata(url)
 	case strings.Contains(url, "newgrounds.com"):
 		fmt.Println("Unimplemented.")

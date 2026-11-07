@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "args": ["https://www.newgrounds.com/playlist/565121/cool"]
+            "args": ["https://www.newgrounds.com/portal/view/646774"]
         }
     ]
 }

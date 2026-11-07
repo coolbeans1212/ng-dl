@@ -16,12 +16,15 @@ func main() {
 		os.Exit(1)
 	}
 	url := args[0]
-	if strings.Contains(url, "/audio/listen") {
+	switch {
+	case strings.Contains(url, "/audio/listen"):
 		scraper.DownloadSongAndSaveWithMetadata(url)
-	} else if strings.Contains(url, "newgrounds.com") {
+	case strings.Contains(url, "/playlist/"):
+		scraper.DownloadAllSongsInPlaylistWithMetadata(url)
+	case strings.Contains(url, "newgrounds.com"):
 		fmt.Println("Unimplemented.")
 		os.Exit(1)
-	} else {
+	default:
 		fmt.Println("Please provide a valid newgrounds.com link.")
 		os.Exit(1)
 	}

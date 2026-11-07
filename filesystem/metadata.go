@@ -49,6 +49,7 @@ func WriteMetadataToMP3File(filepath string, song Song) {
 	tag.SetVersion(3)
 	encoding := id3v2.EncodingUTF8
 	tag.SetTitle(song.Title)
+	tag.SetAlbum(song.Title) // newgrounds doesn't have albums :(. set the album to the title so that iTunes doesn't show Unknown Album for everything
 	tag.SetArtist(song.Artist)
 	tag.SetYear(song.Year)
 	tag.SetGenre(song.Genre)

@@ -2,6 +2,7 @@ package filesystem
 
 import (
 	"fmt"
+	"github.com/Sorrow446/go-mp4tag"
 	"github.com/bogem/id3v2/v2"
 	"os"
 	"path/filepath"
@@ -18,6 +19,20 @@ type Song struct {
 	DownloadURL string
 	AlbumArtURL string
 	Rating      float32
+}
+
+type NGVideoList struct {
+	Id      int    `json:"id"`
+	Title   string `json:"title"`
+	Author  string `json:"author"`
+	Sources map[string][]struct {
+		Type   string `json:"type"`
+		Source string `json:"src"`
+	} `json:"sources"`
+	Error struct {
+		Code    int    `json:"code"`
+		Message string `json:"msg"`
+	} `json:"error"`
 }
 
 func starsFloatToPOPM(stars float32) (popm int) {
@@ -81,20 +96,6 @@ func RenameMP3File(path string, song Song) {
 	}
 }
 
-func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto string) {
-	directory, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Could not get current directory.")
-		return
-	}
-	fileExt := filepath.Ext(filename)
-	err = os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
-	if err != nil {
-		fmt.Printf("Could not rename the file: %s", err)
-		return
-	}
-}
-
 func AttachAlbumArt(path string, albumArt []byte) {
 	tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
 	if err != nil {
@@ -110,4 +111,36 @@ func AttachAlbumArt(path string, albumArt []byte) {
 		fmt.Println("Could not save album art to file. The MP3 file will not contain any album art.")
 	}
 	fmt.Println("Attached album art.")
+}
+
+func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto string) {
+	directory, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Could not get current directory.")
+		return
+	}
+	fileExt := filepath.Ext(filename)
+	err = os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
+	if err != nil {
+		fmt.Printf("Could not rename the file: %s", err)
+		return
+	}
+}
+
+func WriteMetadataToMP4File(filepath string, video NGVideoList) {
+	mp4, err := mp4tag.Open(filepath)
+	if err != nil {
+		fmt.Printf("Could not attach metadata to the file: %s", err)
+		return
+	}
+	defer mp4.Close()
+	tags := &mp4tag.MP4Tags{
+		Artist: video.Author,
+		Title:  video.Title,
+	}
+	err = mp4.Write(tags, []string{})
+	if err != nil {
+		fmt.Printf("Could not attach metadata to the file: %s", err)
+		return
+	}
 }

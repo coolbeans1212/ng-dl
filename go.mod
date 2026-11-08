@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/Sorrow446/go-mp4tag v0.0.0-20240130220823-68ce31d53e37 // indirect
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/antchfx/htmlquery v1.3.3 // indirect
 	github.com/antchfx/xmlquery v1.4.2 // indirect

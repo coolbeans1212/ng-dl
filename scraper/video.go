@@ -13,22 +13,8 @@ import (
 	"strings"
 )
 
-type NGVideoList struct {
-	Id      int    `json:"id"`
-	Title   string `json:"title"`
-	Author  string `json:"author"`
-	Sources map[string][]struct {
-		Type   string `json:"type"`
-		Source string `json:"src"`
-	} `json:"sources"`
-	Error struct {
-		Code    int    `json:"code"`
-		Message string `json:"msg"`
-	} `json:"error"`
-}
-
-func GetVideoUrls(urlStr string) NGVideoList {
-	var videoList NGVideoList
+func GetVideoUrls(urlStr string) filesystem.NGVideoList {
+	var videoList filesystem.NGVideoList
 	id := path.Base(urlStr)
 	source := "https://www.newgrounds.com/portal/video/" + id
 	c := colly.NewCollector(colly.AllowedDomains("newgrounds.com", "www.newgrounds.com"))
@@ -77,6 +63,14 @@ func DownloadHighestQualityVideo(urlStr string) {
 	fmt.Printf("Downloading %s...\n", highestResolutionVideo)
 	filesystem.DownloadFileAndSave(highestResolutionVideo)
 	urlParsed, err := url.Parse(highestResolutionVideo)
+	var dir string
+	dir, err = os.Getwd()
+	if err != nil {
+		fmt.Println("Could not get the current directory.")
+	} else {
+		fmt.Println("Writing metadata...")
+		filesystem.WriteMetadataToMP4File(path.Join(dir, path.Base(urlParsed.Path)), videoList)
+	}
 	if err != nil {
 		fmt.Println("Could not rename the file.")
 	} else {

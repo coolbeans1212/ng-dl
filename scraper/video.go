@@ -74,6 +74,8 @@ func DownloadHighestQualityVideo(urlStr string) {
 	if err != nil {
 		fmt.Println("Could not rename the file.")
 	} else {
-		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id)))
+		newName := fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id))
+		fmt.Printf("Renaming file to %s.mp4...\n", newName)
+		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
 	}
 }

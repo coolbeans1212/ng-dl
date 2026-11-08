@@ -1,4 +1,4 @@
-<img src="https://user-cdn.hackclub-assets.com/01a1b87b-0fcf-7ee2-a882-1c4a2fdf55fe/ng-dl.svg" alt="ng-dl">
+<img src="https://cdn.hackclub.com/01a1bab1-17b7-78de-a4e5-45f16d47bf0d/ng-dl2.svg" alt="ng-dl">
 
 # ng-dl
 Like yt-dlp but for Newgrounds: download Newgrounds assets from the command line!

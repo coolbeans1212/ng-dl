@@ -62,20 +62,19 @@ func DownloadHighestQualityVideo(urlStr string) {
 	highestResolutionVideo := videoList.Sources[highestResolution][0].Source
 	fmt.Printf("Downloading %s...\n", highestResolutionVideo)
 	filesystem.DownloadFileAndSave(highestResolutionVideo)
-	urlParsed, err := url.Parse(highestResolutionVideo)
-	var dir string
-	dir, err = os.Getwd()
+	urlParsed, parseerr := url.Parse(highestResolutionVideo)
+	if parseerr != nil {
+		fmt.Printf("Could not get the file name: %s\n", parseerr)
+		return
+	}
+	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Could not get the current directory.")
 	} else {
 		fmt.Println("Writing metadata...")
 		filesystem.WriteMetadataToMP4File(path.Join(dir, path.Base(urlParsed.Path)), videoList)
 	}
-	if err != nil {
-		fmt.Println("Could not rename the file.")
-	} else {
-		newName := fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id))
-		fmt.Printf("Renaming file to %s.mp4...\n", newName)
-		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
-	}
+	newName := fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id))
+	fmt.Printf("Renaming file to %s.mp4...\n", newName)
+	filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
 }

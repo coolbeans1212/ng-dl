@@ -2,8 +2,8 @@ package filesystem
 
 import (
 	"fmt"
-	"github.com/Sorrow446/go-mp4tag"
 	"github.com/bogem/id3v2/v2"
+	"github.com/gcottom/mp4meta"
 	"os"
 	"path/filepath"
 )
@@ -128,19 +128,23 @@ func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto 
 }
 
 func WriteMetadataToMP4File(filepath string, video NGVideoList) {
-	mp4, err := mp4tag.Open(filepath)
+	file, err := os.Open(filepath)
 	if err != nil {
-		fmt.Printf("Could not attach metadata to the file: %s", err)
+		fmt.Printf("Could not open the file: %s\n", err)
 		return
 	}
-	defer mp4.Close()
-	tags := &mp4tag.MP4Tags{
-		Artist: video.Author,
-		Title:  video.Title,
-	}
-	err = mp4.Write(tags, []string{})
+	defer file.Close()
+	mp4, err := mp4meta.ReadMP4(file)
 	if err != nil {
-		fmt.Printf("Could not attach metadata to the file: %s", err)
+		fmt.Printf("Could not attach metadata to the file: %s\n", err)
+		return
+	}
+	mp4.SetAlbumArtist(video.Author)
+	mp4.SetArtist(video.Author)
+	mp4.SetTitle(video.Title)
+	err = mp4.Save(file)
+	if err != nil {
+		fmt.Printf("Could not attach metadata to the file: %s\n", err)
 		return
 	}
 }

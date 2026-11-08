@@ -6,8 +6,8 @@ Like yt-dlp but for Newgrounds: download Newgrounds assets from the command line
 | Feature | Support | Notes |
 |---------|---------|-------|
 | Audio | Supported | Not tested that much, but works |
-| Lists/Collections/Series | Partially supported | Only audio lists work |
-| Movies | Partially supported | Can download movies but doesn't add metadata. Untested. |
+| Lists/Collections/Series | Partially supported | Only audio & movie lists work |
+| Movies | Partially supported | Can download movies with limited metadata. Untested. |
 | Games | Unsupported | |
 | Art | Unsupported | |
 | NG Guard | Unsupported | |

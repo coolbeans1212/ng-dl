@@ -3,14 +3,14 @@ package scraper
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gocolly/colly"
 	"net/http"
+	"net/url"
 	"ng-dl/filesystem"
 	"os"
 	"path"
 	"strconv"
 	"strings"
-
-	"github.com/gocolly/colly"
 )
 
 type NGVideoList struct {
@@ -74,6 +74,12 @@ func DownloadHighestQualityVideo(urlStr string) {
 		}
 	}
 	highestResolutionVideo := videoList.Sources[highestResolution][0].Source
-	fmt.Printf("Downloading %s...", highestResolutionVideo)
+	fmt.Printf("Downloading %s...\n", highestResolutionVideo)
 	filesystem.DownloadFileAndSave(highestResolutionVideo)
+	urlParsed, err := url.Parse(highestResolutionVideo)
+	if err != nil {
+		fmt.Println("Could not rename the file.")
+	} else {
+		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id)))
+	}
 }

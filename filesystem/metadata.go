@@ -81,6 +81,20 @@ func RenameMP3File(path string, song Song) {
 	}
 }
 
+func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto string) {
+	directory, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Could not get current directory.")
+		return
+	}
+	fileExt := filepath.Ext(filename)
+	err = os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
+	if err != nil {
+		fmt.Printf("Could not rename the file: %s", err)
+		return
+	}
+}
+
 func AttachAlbumArt(path string, albumArt []byte) {
 	tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
 	if err != nil {

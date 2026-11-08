@@ -36,6 +36,10 @@ func DownloadHighestQualityVideo(urlStr string) {
 	highestVerticalPx := 0
 	highestResolution := "360p"
 	videoList := GetVideoUrls(urlStr)
+	if videoList.Error.Code != 0 {
+		fmt.Printf("Cannot download video: are you sure this is a video? %s", videoList.Error.Message)
+		return
+	}
 	for i := range videoList.Sources {
 		var verticalPx int
 		if i[len(i)-1:] == "k" {

@@ -86,8 +86,22 @@ func GetLinksFromPlaylist(urlStr string) map[string]map[string]VisualLinkSimple 
 
 func DownloadAllSongsInPlaylistWithMetadata(urlStr string) {
 	audioList := GetLinksFromPlaylist(urlStr)
+	if len(audioList["3"]) == 0 {
+		return
+	}
 	fmt.Printf("Downloading %s songs...\n", strconv.Itoa(len(audioList["3"])))
 	for i := range audioList["3"] {
 		DownloadSongAndSaveWithMetadata(audioList["3"][i].Url)
+	}
+}
+
+func DownloadAllMoviesInPlaylistWithMetadata(urlStr string) {
+	videoList := GetLinksFromPlaylist(urlStr)
+	if len(videoList["1"]) == 0 {
+		return
+	}
+	fmt.Printf("Downloading %s videos...\n", strconv.Itoa(len(videoList["1"])))
+	for i := range videoList["1"] {
+		DownloadHighestQualityVideo(videoList["1"][i].Url)
 	}
 }

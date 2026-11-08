@@ -21,6 +21,7 @@ func main() {
 		scraper.DownloadSongAndSaveWithMetadata(url)
 	case strings.Contains(url, "/playlist/") || strings.Contains(url, "/series/") || strings.Contains(url, "/collection/"):
 		scraper.DownloadAllSongsInPlaylistWithMetadata(url)
+		scraper.DownloadAllMoviesInPlaylistWithMetadata(url)
 	case strings.Contains(url, "/portal/view/"):
 		scraper.DownloadHighestQualityVideo(url)
 	case strings.Contains(url, "newgrounds.com"):

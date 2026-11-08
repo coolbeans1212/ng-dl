@@ -32,7 +32,8 @@ func RefreshProgress() {
 		return
 	}
 	out.Write([]byte("\033[s"))    // save cursor pos
-	out.Write([]byte("\033[2;0H")) // set cursor pos to (2, 0)
+	out.Write([]byte("\033[1;1H")) // set cursor pos to (1, 1)
+	out.Write([]byte("\033[2K\n")) // blank row
 	for i := 0; i < len(progresses)*3+2; i++ {
 		out.Write([]byte("\033[" + FOREGROUND + ";" + BACKGROUND + "m\033[K\033[0m\n")) // colour in rows in with cyan
 	}

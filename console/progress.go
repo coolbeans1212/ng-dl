@@ -37,7 +37,7 @@ func RefreshProgress() {
 	for i := 0; i < len(progresses)*3+2; i++ {
 		out.Write([]byte("\033[" + FOREGROUND + ";" + BACKGROUND + "m\033[K\033[0m\n")) // colour in rows in with cyan
 	}
-	out.Write([]byte("\033[3;0H")) // set cursor pos to (3, 0)
+	out.Write([]byte("\033[3;1H")) // set cursor pos to (3, 1)
 	out.Write([]byte("\033[" + BACKGROUND + "m\033[" + FOREGROUND + "m"))
 	for i := range progresses {
 		out.Write([]byte("\033[" + BACKGROUND + "m\033[" + FOREGROUND + "m " + progresses[i].Action + "\n"))

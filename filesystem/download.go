@@ -6,9 +6,10 @@ import (
 	_ "golang.org/x/image/webp"
 	"image"
 	"image/png"
-	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
+	"ng-dl/console"
 	"os"
 	"path"
 	"path/filepath"
@@ -16,11 +17,34 @@ import (
 
 func DownloadFileAndSave(urlStr string) string {
 	var filename string
+	progressid := rand.Int()
 	resp, err := http.Get(urlStr)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
+	total := resp.ContentLength
+	var downloaded int64
+	var data []byte
+	buffer := make([]byte, 32*1024)
+	for {
+		n, err := resp.Body.Read(buffer)
+		if n > 0 {
+			downloaded += int64(n)
+			percent := 0
+			if total > 0 {
+				percent = int(float64(downloaded) / float64(total) * 100)
+				if percent > 100 {
+					percent = 100
+				}
+			}
+			console.WriteProgress(progressid, "Downloading "+urlStr, percent)
+			data = append(data, buffer[:n]...)
+		}
+		if err != nil {
+			break
+		}
+	}
 	if filename == "" {
 		parsedURL, err := url.Parse(urlStr)
 		if err != nil {
@@ -33,14 +57,11 @@ func DownloadFileAndSave(urlStr string) string {
 		panic(err)
 	}
 	out := filepath.Join(dir, filename)
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
 	err = os.WriteFile(out, data, 0644)
 	if err != nil {
-		panic(err)
+		fmt.Println("Could not save the file.")
 	}
+	console.ClearProgress(progressid)
 	return out
 
 }

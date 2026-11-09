@@ -15,6 +15,10 @@ Like yt-dlp but for Newgrounds: download Newgrounds assets from the command line
 
 ng-dl is in alpha. Once all features are supported, this table will be removed and ng-dl will leave alpha.
 ## Usage (with examples)
+To use ng-dl, open a terminal window and navigate to the directory with the executable file, then follow the usage below:
+> [!TIP]
+> On Windows, if you place the ng-dl executable in a folder in your PATH, you will be able to use it from anywhere. To edit your PATH, search for "Edit the system environment variables" in the Start menu and open it, click Environment Variables..., click Path, click Edit..., click New, enter the name of the directory, then click OK in all the windows.   
+> On Linux, just place the executable in /usr/local/bin/.
 ```
 ng-dl [options] <url>
 ```

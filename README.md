@@ -17,6 +17,7 @@ ng-dl is in alpha. Once all features are supported, this table will be removed a
 ## Usage (with examples)
 > [!NOTE]
 > If you encounter NG Guard or "Error Forbidden occured while trying to fetch", try opening www.newgrounds.com in a web browser, then try running ng-dl again.
+
 To use ng-dl, open a terminal window and navigate to the directory with the executable file, then follow the usage below:
 > [!TIP]
 > On Windows, if you place the ng-dl executable in a folder in your PATH, you will be able to use it from anywhere. To edit your PATH, search for "Edit the system environment variables" in the Start menu and open it, click Environment Variables..., click Path, click Edit..., click New, enter the name of the directory, then click OK in all the windows.   

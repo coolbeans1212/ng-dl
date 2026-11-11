@@ -10,11 +10,13 @@ Like yt-dlp but for Newgrounds: download Newgrounds assets from the command line
 | Movies | Partially supported | Can download movies with limited metadata. Untested. |
 | Games | Unsupported | |
 | Art | Unsupported | |
-| NG Guard | Unsupported | |
+| NG Guard | Unsupported | **See note below.** |
 | Other | Unsupported | |
 
 ng-dl is in alpha. Once all features are supported, this table will be removed and ng-dl will leave alpha.
 ## Usage (with examples)
+> [!NOTE]
+> If you encounter NG Guard or "Error Forbidden occured while trying to fetch", try opening www.newgrounds.com in a web browser, then try running ng-dl again.
 ```
 ng-dl [options] <url>
 ```

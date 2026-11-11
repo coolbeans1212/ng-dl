@@ -5,7 +5,6 @@ import (
 	"github.com/bogem/id3v2/v2"
 	"github.com/gcottom/mp4meta"
 	"os"
-	"path/filepath"
 )
 
 type Song struct {
@@ -85,17 +84,6 @@ func WriteMetadataToMP3File(filepath string, song Song) {
 	fmt.Println("Applied metadata to file.")
 }
 
-func RenameMP3File(path string, song Song) {
-	directory := filepath.Dir(path)
-	newName := song.Artist + " - " + song.Title + ".mp3"
-	newPath := filepath.Join(directory, newName)
-	fmt.Printf("Renamed file to %s\n", newName)
-	err := os.Rename(path, newPath)
-	if err != nil {
-		fmt.Println("Could not rename the file.")
-	}
-}
-
 func AttachAlbumArt(path string, albumArt []byte) {
 	tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
 	if err != nil {
@@ -111,20 +99,6 @@ func AttachAlbumArt(path string, albumArt []byte) {
 		fmt.Println("Could not save album art to file. The MP3 file will not contain any album art.")
 	}
 	fmt.Println("Attached album art.")
-}
-
-func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto string) {
-	directory, err := os.Getwd()
-	if err != nil {
-		fmt.Println("Could not get current directory.")
-		return
-	}
-	fileExt := filepath.Ext(filename)
-	err = os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
-	if err != nil {
-		fmt.Printf("Could not rename the file: %s", err)
-		return
-	}
 }
 
 func WriteMetadataToMP4File(filepath string, video NGVideoList) {

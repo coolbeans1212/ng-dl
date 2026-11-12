@@ -20,6 +20,12 @@ type Song struct {
 	Rating      float32
 }
 
+type Artwork struct {
+	Title        string
+	Author       string
+	DownloadURLs map[string]string
+}
+
 type NGVideoList struct {
 	Id      int    `json:"id"`
 	Title   string `json:"title"`

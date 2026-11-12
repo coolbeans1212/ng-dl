@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "args": ["https://www.newgrounds.com/portal/view/646774"]
+            "args": ["https://www.newgrounds.com/art/view/ddarianne/join-me-in-heaven-2"]
         }
     ]
 }

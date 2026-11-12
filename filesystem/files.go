@@ -22,19 +22,43 @@ func SanitiseFileName(filename string) string {
 	return sanitiser.Replace(filename)
 }
 
+func CreateDirectoryInCurrentDirectory(dirname string) {
+	dirname = SanitiseFileName(dirname)
+	curdir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Could not get current directory.")
+		return
+	}
+	os.Mkdir(filepath.Join(curdir, dirname), 0644)
+}
+
+func RenameFileInDirectoryAndPreserveExtension(directory string, filename string, renameto string) {
+	renameto = SanitiseFileName(renameto)
+	fileExt := filepath.Ext(filename)
+	err := os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
+	if err != nil {
+		fmt.Printf("Could not rename the file: %s\n", err)
+		return
+	}
+}
+
 func RenameFileInCurrentDirectoryAndPreserveExtension(filename string, renameto string) {
-	filename = SanitiseFileName(filename)
 	directory, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Could not get current directory.")
 		return
 	}
-	fileExt := filepath.Ext(filename)
-	err = os.Rename(filepath.Join(directory, filename), filepath.Join(directory, renameto)+fileExt)
+	RenameFileInDirectoryAndPreserveExtension(directory, filename, renameto)
+}
+
+func RenameFileInRelativeDirectoryAndPreserveExtension(directory string, filename string, renameto string) {
+	currdir, err := os.Getwd()
 	if err != nil {
-		fmt.Printf("Could not rename the file: %s", err)
+		fmt.Println("Could not get current directory.")
 		return
 	}
+	relativedir := filepath.Join(currdir, directory)
+	RenameFileInDirectoryAndPreserveExtension(relativedir, filename, renameto)
 }
 
 func RenameMP3File(path string, song Song) {

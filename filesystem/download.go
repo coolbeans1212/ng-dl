@@ -15,7 +15,7 @@ import (
 	"path/filepath"
 )
 
-func DownloadFileAndSave(urlStr string) string {
+func DownloadFileAndSaveToDir(urlStr string, directory string) string {
 	var filename string
 	progressid := rand.Int()
 	resp, err := http.Get(urlStr)
@@ -52,18 +52,31 @@ func DownloadFileAndSave(urlStr string) string {
 		}
 		filename = path.Base(parsedURL.Path)
 	}
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	out := filepath.Join(dir, filename)
+	out := filepath.Join(directory, filename)
 	err = os.WriteFile(out, data, 0644)
 	if err != nil {
 		fmt.Println("Could not save the file.")
 	}
 	console.ClearProgress(progressid)
 	return out
+}
 
+func DownloadFileAndSave(urlStr string) string {
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	return DownloadFileAndSaveToDir(urlStr, dir)
+
+}
+
+func DownloadFileAndSaveInRelativeDir(urlStr string, relativeDirectory string) string {
+	currentdir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	dir := filepath.Join(currentdir, relativeDirectory)
+	return DownloadFileAndSaveToDir(urlStr, dir)
 }
 
 func DownloadAndConvertWebpToPng(url string) []byte {

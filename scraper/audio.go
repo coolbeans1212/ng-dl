@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetMetadata(url string) filesystem.Song {
+func GetAudioMetadata(url string) filesystem.Song {
 	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink, rating, albumArtURL string
 	c := colly.NewCollector(
 		colly.AllowedDomains("newgrounds.com", "audio.ngfiles.com", "www.newgrounds.com"),
@@ -82,7 +82,7 @@ func GetMetadata(url string) filesystem.Song {
 }
 
 func DownloadSongAndSaveWithMetadata(url string) {
-	metadata := GetMetadata(url)
+	metadata := GetAudioMetadata(url)
 	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL)
 	filesystem.WriteMetadataToMP3File(filepath, metadata)
 	filesystem.AttachAlbumArt(filepath, filesystem.DownloadAndConvertWebpToPng(metadata.AlbumArtURL))

@@ -16,6 +16,14 @@ func main() {
 		os.Exit(1)
 	}
 	url := args[0]
+	url = strings.TrimPrefix(url, "https://")
+	url = strings.TrimPrefix(url, "http://")
+	url = "https://" + url
+	subdomain, err := scraper.GetSubdomain(url)
+	if err != nil {
+		fmt.Println("Please provide a valid newgrounds.com link.")
+		os.Exit(1)
+	}
 	switch {
 	case strings.Contains(url, "/audio/listen/"):
 		scraper.DownloadSongAndSaveWithMetadata(url)
@@ -26,6 +34,9 @@ func main() {
 		scraper.DownloadHighestQualityVideo(url)
 	case strings.Contains(url, "/art/view/"):
 		scraper.DownloadArtAndSaveWithMetadata(url)
+	case subdomain != "www" && subdomain != "":
+		scraper.DownloadAllUserAssets(url)
+		fmt.Println(subdomain)
 	case strings.Contains(url, "newgrounds.com"):
 		fmt.Println("Unimplemented.")
 		os.Exit(1)

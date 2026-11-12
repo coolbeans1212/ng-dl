@@ -55,7 +55,7 @@ func RefreshProgress() {
 		out.Write([]byte(strings.Repeat(" ", inner-filled)))
 		out.Write([]byte("]\n"))
 	}
-
+	out.Write([]byte("\033[0m"))
 	out.Write([]byte("\033[u")) // restore cursor pos
 }
 

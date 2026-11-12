@@ -19,6 +19,9 @@ func SanitiseFileName(filename string) string {
 		"?", "？",
 		"*", "＊",
 	)
+	for strings.HasSuffix(filename, ".") {
+		filename = strings.TrimSuffix(filename, ".")
+	}
 	return sanitiser.Replace(filename)
 }
 
@@ -30,6 +33,18 @@ func CreateDirectoryInCurrentDirectory(dirname string) {
 		return
 	}
 	os.Mkdir(filepath.Join(curdir, dirname), 0644)
+}
+
+func RenameFileWithAbsolutePathAndPreserveExtension(path string, renameto string) {
+	renameto = SanitiseFileName(renameto)
+	dir := filepath.Dir(path)
+	filename := filepath.Base(path)
+	fileExt := filepath.Ext(filename)
+	err := os.Rename(path, filepath.Join(dir, renameto)+fileExt)
+	if err != nil {
+		fmt.Printf("Could not rename the file: %s\n", err)
+		return
+	}
 }
 
 func RenameFileInDirectoryAndPreserveExtension(directory string, filename string, renameto string) {

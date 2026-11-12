@@ -40,10 +40,10 @@ func GetArtMetadata(url string) filesystem.Artwork {
 
 func DownloadArtAndSaveWithMetadata(url string) {
 	metadata := GetArtMetadata(url)
-	dirname := fmt.Sprintf("%s - %s", metadata.Author, metadata.Title)
+	dirname := filesystem.SanitiseFileName(fmt.Sprintf("%s - %s", metadata.Author, metadata.Title))
 	filesystem.CreateDirectoryInCurrentDirectory(dirname)
 	for i := range metadata.DownloadURLs {
 		filename := filesystem.DownloadFileAndSaveInRelativeDir(metadata.DownloadURLs[i], dirname)
-		filesystem.RenameFileInDirectoryAndPreserveExtension(dirname, filename, i)
+		filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, i)
 	}
 }

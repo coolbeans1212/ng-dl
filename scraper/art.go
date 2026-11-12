@@ -23,6 +23,9 @@ func GetArtMetadata(url string) filesystem.Artwork {
 		artwork.Author = e.Text
 	})
 	c.OnHTML(`div[id^="art-container-"] div`, func(e *colly.HTMLElement) {
+		if e.Attr("id") == "" {
+			return
+		}
 		regularSrc := e.ChildAttr("div div a img", "src")
 		if regularSrc == "" {
 			artwork.DownloadURLs[e.Attr("id")] = e.ChildAttr("div div a img", "data-smartload-src")
@@ -41,9 +44,14 @@ func GetArtMetadata(url string) filesystem.Artwork {
 func DownloadArtAndSaveWithMetadata(url string) {
 	metadata := GetArtMetadata(url)
 	dirname := filesystem.SanitiseFileName(fmt.Sprintf("%s - %s", metadata.Author, metadata.Title))
-	filesystem.CreateDirectoryInCurrentDirectory(dirname)
-	for i := range metadata.DownloadURLs {
-		filename := filesystem.DownloadFileAndSaveInRelativeDir(metadata.DownloadURLs[i], dirname)
-		filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, i)
+	if len(metadata.DownloadURLs) == 1 {
+		filename := filesystem.DownloadFileAndSave(metadata.DownloadURLs["1"])
+		filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, dirname)
+	} else {
+		filesystem.CreateDirectoryInCurrentDirectory(dirname)
+		for i := range metadata.DownloadURLs {
+			filename := filesystem.DownloadFileAndSaveInRelativeDir(metadata.DownloadURLs[i], dirname)
+			filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, i)
+		}
 	}
 }

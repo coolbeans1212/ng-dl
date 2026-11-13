@@ -7,12 +7,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func GetAudioMetadata(url string) filesystem.Song {
 	var title, metaTitle, metaDescription, artist, authorUrl, year, genre, copyright, downloadLink, rating, albumArtURL string
 	c := colly.NewCollector(
 		colly.AllowedDomains("newgrounds.com", "audio.ngfiles.com", "www.newgrounds.com"),
+		colly.AllowURLRevisit(),
 	)
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Fetching", r.URL.String())
@@ -67,10 +69,18 @@ func GetAudioMetadata(url string) filesystem.Song {
 	c.OnHTML("img.audio-cover-art", func(e *colly.HTMLElement) {
 		albumArtURL = e.Attr("src")
 	})
-	err := c.Visit(url)
-	if err != nil {
-		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Cannot continue.\n", err, url)
-		os.Exit(1)
+	for {
+		err := c.Visit(url)
+		if err == nil {
+			break
+		}
+		if err.Error() == "Too Many Requests" {
+			fmt.Println("Rate-limited, waiting 10 seconds...")
+			time.Sleep(10 * time.Second)
+			continue
+		}
+		fmt.Printf("Error %[1]s occured while trying to fetch %[2]s. Skipping...\n", err, url)
+		return filesystem.Song{}
 	}
 	fmt.Printf("Fetched metadata for %s\n", title)
 	ratingFloat, err := strconv.ParseFloat(rating, 32)

@@ -35,8 +35,7 @@ func main() {
 	case strings.Contains(url, "/art/view/"):
 		scraper.DownloadArtAndSaveWithMetadata(url)
 	case subdomain != "www" && subdomain != "":
-		scraper.DownloadAllUserAssets(url)
-		fmt.Println(subdomain)
+		scraper.DownloadAllUserAssets(subdomain)
 	case strings.Contains(url, "newgrounds.com"):
 		fmt.Println("Unimplemented.")
 		os.Exit(1)

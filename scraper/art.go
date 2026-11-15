@@ -42,17 +42,21 @@ func GetArtMetadata(url string) filesystem.Artwork {
 	return artwork
 }
 
-func DownloadArtAndSaveWithMetadata(url string, flags flags.CliFlags) {
+func DownloadArtAndSaveWithMetadata(url string, cliFlags flags.CliFlags) {
 	metadata := GetArtMetadata(url)
 	dirname := filesystem.SanitiseFileName(fmt.Sprintf("%s - %s", metadata.Author, metadata.Title))
 	if len(metadata.DownloadURLs) == 1 {
 		filename := filesystem.DownloadFileAndSave(metadata.DownloadURLs["1"])
-		filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, dirname)
+		if !cliFlags.DontRename {
+			filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, dirname)
+		}
 	} else {
 		filesystem.CreateDirectoryInCurrentDirectory(dirname)
 		for i := range metadata.DownloadURLs {
 			filename := filesystem.DownloadFileAndSaveInRelativeDir(metadata.DownloadURLs[i], dirname)
-			filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, i)
+			if !cliFlags.DontRename {
+				filesystem.RenameFileWithAbsolutePathAndPreserveExtension(filename, i)
+			}
 		}
 	}
 }

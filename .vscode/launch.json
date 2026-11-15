@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
-            "args": ["stratales.newgrounds.com"]
+            "args": ["-dont-rename", "https://www.newgrounds.com/art/view/burningmagma/hopeful"]
         }
     ]
 }

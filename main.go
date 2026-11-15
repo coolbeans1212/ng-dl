@@ -14,6 +14,7 @@ func main() {
 	args := flag.Args()
 	if len(args) != 1 {
 		fmt.Println("Usage: ng-dl [options] <url>")
+		fmt.Println("Type ng-dl --help to get a list of options. Make sure the URL is after all options.")
 		os.Exit(1)
 	}
 	url := args[0]

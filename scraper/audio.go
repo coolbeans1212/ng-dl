@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"ng-dl/filesystem"
+	"ng-dl/flags"
 	"os"
 	"strconv"
 	"strings"
@@ -91,11 +92,14 @@ func GetAudioMetadata(url string) filesystem.Song {
 	return filesystem.Song{Title: title, Description: metaDescription, Artist: artist, ArtistURL: authorUrl, Year: year, Genre: genre, Copyright: copyright, DownloadURL: downloadLink, Rating: float32(ratingFloat), AlbumArtURL: albumArtURL}
 }
 
-func DownloadSongAndSaveWithMetadata(url string) {
+func DownloadSongAndSaveWithMetadata(url string, cliFlags flags.CliFlags) {
 	metadata := GetAudioMetadata(url)
 	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL)
-	filesystem.WriteMetadataToMP3File(filepath, metadata)
-	filesystem.AttachAlbumArt(filepath, filesystem.DownloadAndConvertWebpToPng(metadata.AlbumArtURL))
-
-	filesystem.RenameMP3File(filepath, metadata)
+	if !cliFlags.DontFixMetadata {
+		filesystem.WriteMetadataToMP3File(filepath, metadata)
+		filesystem.AttachAlbumArt(filepath, filesystem.DownloadAndConvertWebpToPng(metadata.AlbumArtURL))
+	}
+	if !cliFlags.DontRename {
+		filesystem.RenameMP3File(filepath, metadata)
+	}
 }

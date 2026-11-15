@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"ng-dl/filesystem"
+	"ng-dl/flags"
 	"os"
 )
 
@@ -41,7 +42,7 @@ func GetArtMetadata(url string) filesystem.Artwork {
 	return artwork
 }
 
-func DownloadArtAndSaveWithMetadata(url string) {
+func DownloadArtAndSaveWithMetadata(url string, flags flags.CliFlags) {
 	metadata := GetArtMetadata(url)
 	dirname := filesystem.SanitiseFileName(fmt.Sprintf("%s - %s", metadata.Author, metadata.Title))
 	if len(metadata.DownloadURLs) == 1 {

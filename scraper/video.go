@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"ng-dl/filesystem"
+	"ng-dl/flags"
 	"os"
 	"path"
 	"strconv"
@@ -32,7 +33,7 @@ func GetVideoUrls(urlStr string) filesystem.NGVideoList {
 	return videoList
 }
 
-func DownloadHighestQualityVideo(urlStr string) {
+func DownloadHighestQualityVideo(urlStr string, cliFlags flags.CliFlags) {
 	highestVerticalPx := 0
 	highestResolution := "360p"
 	videoList := GetVideoUrls(urlStr)

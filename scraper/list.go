@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gocolly/colly"
+	"ng-dl/flags"
 	"os"
 	"strconv"
 	"strings"
@@ -84,24 +85,24 @@ func GetLinksFromPlaylist(urlStr string) map[string]map[string]VisualLinkSimple 
 	return visualLinksResponse.Simples
 }
 
-func DownloadAllSongsInPlaylistWithMetadata(urlStr string) {
+func DownloadAllSongsInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags) {
 	audioList := GetLinksFromPlaylist(urlStr)
 	if len(audioList["3"]) == 0 {
 		return
 	}
 	fmt.Printf("Downloading %s songs...\n", strconv.Itoa(len(audioList["3"])))
 	for i := range audioList["3"] {
-		DownloadSongAndSaveWithMetadata(audioList["3"][i].Url)
+		DownloadSongAndSaveWithMetadata(audioList["3"][i].Url, cliFlags)
 	}
 }
 
-func DownloadAllMoviesInPlaylistWithMetadata(urlStr string) {
+func DownloadAllMoviesInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags) {
 	videoList := GetLinksFromPlaylist(urlStr)
 	if len(videoList["1"]) == 0 {
 		return
 	}
 	fmt.Printf("Downloading %s videos...\n", strconv.Itoa(len(videoList["1"])))
 	for i := range videoList["1"] {
-		DownloadHighestQualityVideo(videoList["1"][i].Url)
+		DownloadHighestQualityVideo(videoList["1"][i].Url, cliFlags)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/gocolly/colly"
 	"net/http"
 	"net/url"
+	"ng-dl/flags"
 	"strconv"
 	"strings"
 )
@@ -104,7 +105,7 @@ func GetMoviePageForUser(user string, page string) UserPage {
 	return movies
 }
 
-func DownloadAllAudioOfUser(user string) error {
+func DownloadAllAudioOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
 	page := "1"
 	for {
@@ -118,7 +119,7 @@ func DownloadAllAudioOfUser(user string) error {
 				if !exists {
 					return
 				}
-				DownloadSongAndSaveWithMetadata(url)
+				DownloadSongAndSaveWithMetadata(url, cliFlags)
 			})
 		}
 		if audios.LoadMore == "" {
@@ -131,7 +132,7 @@ func DownloadAllAudioOfUser(user string) error {
 	return err
 }
 
-func DownloadAllArtOfUser(user string) error {
+func DownloadAllArtOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
 	page := "1"
 	for {
@@ -145,7 +146,7 @@ func DownloadAllArtOfUser(user string) error {
 				if !exists {
 					return
 				}
-				DownloadArtAndSaveWithMetadata(url)
+				DownloadArtAndSaveWithMetadata(url, cliFlags)
 			})
 		}
 		if audios.LoadMore == "" {
@@ -158,7 +159,7 @@ func DownloadAllArtOfUser(user string) error {
 	return err
 }
 
-func DownloadAllMoviesOfUser(user string) error {
+func DownloadAllMoviesOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
 	page := "1"
 	for {
@@ -172,7 +173,7 @@ func DownloadAllMoviesOfUser(user string) error {
 				if !exists {
 					return
 				}
-				DownloadHighestQualityVideo(url)
+				DownloadHighestQualityVideo(url, cliFlags)
 			})
 		}
 		if audios.LoadMore == "" {
@@ -185,8 +186,8 @@ func DownloadAllMoviesOfUser(user string) error {
 	return err
 }
 
-func DownloadAllUserAssets(user string) {
-	DownloadAllAudioOfUser(user)
-	DownloadAllArtOfUser(user)
-	DownloadAllMoviesOfUser(user)
+func DownloadAllUserAssets(user string, cliFlags flags.CliFlags) {
+	DownloadAllAudioOfUser(user, cliFlags)
+	DownloadAllArtOfUser(user, cliFlags)
+	DownloadAllMoviesOfUser(user, cliFlags)
 }

@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"ng-dl/flags"
 	"ng-dl/scraper"
 	"os"
 	"strings"
 )
 
 func main() {
-	flag.Parse()
+	cliFlags := flags.ParseFlags()
 	args := flag.Args()
 	if len(args) != 1 {
 		fmt.Println("Usage: ng-dl [options] <url>")
@@ -26,16 +27,16 @@ func main() {
 	}
 	switch {
 	case strings.Contains(url, "/audio/listen/"):
-		scraper.DownloadSongAndSaveWithMetadata(url)
+		scraper.DownloadSongAndSaveWithMetadata(url, cliFlags)
 	case strings.Contains(url, "/playlist/") || strings.Contains(url, "/series/") || strings.Contains(url, "/collection/"):
-		scraper.DownloadAllSongsInPlaylistWithMetadata(url)
-		scraper.DownloadAllMoviesInPlaylistWithMetadata(url)
+		scraper.DownloadAllSongsInPlaylistWithMetadata(url, cliFlags)
+		scraper.DownloadAllMoviesInPlaylistWithMetadata(url, cliFlags)
 	case strings.Contains(url, "/portal/view/"):
-		scraper.DownloadHighestQualityVideo(url)
+		scraper.DownloadHighestQualityVideo(url, cliFlags)
 	case strings.Contains(url, "/art/view/"):
-		scraper.DownloadArtAndSaveWithMetadata(url)
+		scraper.DownloadArtAndSaveWithMetadata(url, cliFlags)
 	case subdomain != "www" && subdomain != "":
-		scraper.DownloadAllUserAssets(subdomain)
+		scraper.DownloadAllUserAssets(subdomain, cliFlags)
 	case strings.Contains(url, "newgrounds.com"):
 		fmt.Println("Unimplemented.")
 		os.Exit(1)

@@ -10,6 +10,8 @@ import (
 	"ng-dl/flags"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 type UserPage struct {
@@ -107,6 +109,7 @@ func GetMoviePageForUser(user string, page string) UserPage {
 
 func DownloadAllAudioOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
+	var wg sync.WaitGroup
 	page := "1"
 	for {
 		audios := GetAudioPageForUser(user, page)
@@ -119,7 +122,16 @@ func DownloadAllAudioOfUser(user string, cliFlags flags.CliFlags) error {
 				if !exists {
 					return
 				}
-				DownloadSongAndSaveWithMetadata(url, cliFlags)
+				if !cliFlags.NoParallel {
+					wg.Add(1)
+					go func(url string) {
+						defer wg.Done()
+						DownloadSongAndSaveWithMetadata(url, cliFlags)
+					}(url)
+					time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+				} else {
+					DownloadSongAndSaveWithMetadata(url, cliFlags)
+				}
 			})
 		}
 		if audios.LoadMore == "" {
@@ -129,11 +141,13 @@ func DownloadAllAudioOfUser(user string, cliFlags flags.CliFlags) error {
 			page = strconv.Itoa(pageInt + 1)
 		}
 	}
+	wg.Wait()
 	return err
 }
 
 func DownloadAllArtOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
+	var wg sync.WaitGroup
 	page := "1"
 	for {
 		audios := GetArtPageForUser(user, page)
@@ -146,7 +160,16 @@ func DownloadAllArtOfUser(user string, cliFlags flags.CliFlags) error {
 				if !exists {
 					return
 				}
-				DownloadArtAndSaveWithMetadata(url, cliFlags)
+				if !cliFlags.NoParallel {
+					wg.Add(1)
+					go func(url string) {
+						defer wg.Done()
+						DownloadArtAndSaveWithMetadata(url, cliFlags)
+					}(url)
+					time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+				} else {
+					DownloadArtAndSaveWithMetadata(url, cliFlags)
+				}
 			})
 		}
 		if audios.LoadMore == "" {
@@ -156,11 +179,13 @@ func DownloadAllArtOfUser(user string, cliFlags flags.CliFlags) error {
 			page = strconv.Itoa(pageInt + 1)
 		}
 	}
+	wg.Wait()
 	return err
 }
 
 func DownloadAllMoviesOfUser(user string, cliFlags flags.CliFlags) error {
 	var err error = nil
+	var wg sync.WaitGroup
 	page := "1"
 	for {
 		audios := GetMoviePageForUser(user, page)
@@ -173,7 +198,16 @@ func DownloadAllMoviesOfUser(user string, cliFlags flags.CliFlags) error {
 				if !exists {
 					return
 				}
-				DownloadVideo(url, cliFlags)
+				if !cliFlags.NoParallel {
+					wg.Add(1)
+					go func(url string) {
+						defer wg.Done()
+						DownloadVideo(url, cliFlags)
+					}(url)
+					time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+				} else {
+					DownloadVideo(url, cliFlags)
+				}
 			})
 		}
 		if audios.LoadMore == "" {
@@ -183,6 +217,7 @@ func DownloadAllMoviesOfUser(user string, cliFlags flags.CliFlags) error {
 			page = strconv.Itoa(pageInt + 1)
 		}
 	}
+	wg.Wait()
 	return err
 }
 

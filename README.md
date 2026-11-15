@@ -43,3 +43,13 @@ Attached album art.
 Renamed file to AeronMusic - Sidestep.mp3
 
 ```
+ng-dl also has special strings that you can put instead of a Newgrounds link:
+- `featured-audio` will download the audio featured on the Newgrounds front page.
+- `featured-movies` will download the movies featured on the Newgrounds front page.
+### Example 2: Downloading featured audio
+```
+$ ng-dl featured-audio
+Fetching https://www.newgrounds.com/audio/listen/XXXXXX
+...
+Renamed file to Artist - Song.mp3
+```

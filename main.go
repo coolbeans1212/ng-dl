@@ -26,6 +26,10 @@ func main() {
 		os.Exit(1)
 	}
 	switch {
+	case url == "https://featured-audio":
+		scraper.DownloadFeaturedAudio(cliFlags)
+	case url == "https://featured-movies":
+		scraper.DownloadFeaturedMovies(cliFlags)
 	case strings.Contains(url, "/audio/listen/"):
 		scraper.DownloadSongAndSaveWithMetadata(url, cliFlags)
 	case strings.Contains(url, "/playlist/") || strings.Contains(url, "/series/") || strings.Contains(url, "/collection/"):

@@ -103,3 +103,22 @@ func DownloadSongAndSaveWithMetadata(url string, cliFlags flags.CliFlags) {
 		filesystem.RenameMP3File(filepath, metadata)
 	}
 }
+
+func DownloadFeaturedAudio(cliFlags flags.CliFlags) {
+	audioList := make(map[int]string)
+	c := colly.NewCollector(colly.AllowedDomains("www.newgrounds.com", "newgrounds.com"))
+	c.OnHTML("title", func(e *colly.HTMLElement) {
+		if e.Text == "NG Guard" {
+			fmt.Println("Encountered NG Guard. Bypassing NG Guard is not implemented.")
+			os.Exit(1)
+		}
+	})
+	c.OnHTML("#featured_fp_content_4 .audio-wrapper a.item-link", func(e *colly.HTMLElement) {
+		audioList[e.Index] = e.Attr("href")
+	})
+	c.Visit("https://www.newgrounds.com/")
+	for i := range audioList {
+		DownloadSongAndSaveWithMetadata(audioList[i], cliFlags)
+	}
+
+}

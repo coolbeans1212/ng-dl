@@ -106,3 +106,21 @@ func DownloadVideo(urlStr string, cliFlags flags.CliFlags) {
 		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
 	}
 }
+
+func DownloadFeaturedMovies(cliFlags flags.CliFlags) {
+	videoList := make(map[int]string)
+	c := colly.NewCollector(colly.AllowedDomains("www.newgrounds.com", "newgrounds.com"))
+	c.OnHTML("title", func(e *colly.HTMLElement) {
+		if e.Text == "NG Guard" {
+			fmt.Println("Encountered NG Guard. Bypassing NG Guard is not implemented.")
+			os.Exit(1)
+		}
+	})
+	c.OnHTML("div.featured-submission-grid--movies a.item-portalsubmission-featured", func(e *colly.HTMLElement) {
+		videoList[e.Index] = e.Attr("href")
+	})
+	c.Visit("https://www.newgrounds.com/")
+	for i := range videoList {
+		DownloadVideo(videoList[i], cliFlags)
+	}
+}

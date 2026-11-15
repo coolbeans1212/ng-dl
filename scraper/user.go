@@ -68,7 +68,7 @@ func GetArtPageForUser(user string, page string) UserPage {
 	c.OnResponse(func(r *colly.Response) {
 		err = json.Unmarshal(r.Body, &art)
 		if err != nil {
-			fmt.Printf("Could not decode audio pages as JSON. Skipping audio...\n")
+			fmt.Printf("Could not decode art pages as JSON. Skipping art...\n")
 		}
 	})
 	u, err := url.Parse(urlStr)

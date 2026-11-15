@@ -82,6 +82,28 @@ func GetArtPageForUser(user string, page string) UserPage {
 	return art
 }
 
+func GetMoviePageForUser(user string, page string) UserPage {
+	var movies UserPage
+	var err error = nil
+	urlStr := "https://" + user + ".newgrounds.com/movies"
+	c := colly.NewCollector()
+	c.OnResponse(func(r *colly.Response) {
+		err = json.Unmarshal(r.Body, &movies)
+		if err != nil {
+			fmt.Printf("Could not decode movies pages as JSON. Skipping movies...\n")
+		}
+	})
+	u, err := url.Parse(urlStr)
+	q := u.Query()
+	q.Set("page", page)
+	u.RawQuery = q.Encode()
+	headers := http.Header{}
+	headers.Set("X-Requested-With", "XMLHttpRequest")
+	fmt.Printf("Requesting %s...\n", urlStr)
+	c.Request("GET", u.String(), nil, nil, headers)
+	return movies
+}
+
 func DownloadAllAudioOfUser(user string) error {
 	var err error = nil
 	page := "1"
@@ -136,7 +158,35 @@ func DownloadAllArtOfUser(user string) error {
 	return err
 }
 
+func DownloadAllMoviesOfUser(user string) error {
+	var err error = nil
+	page := "1"
+	for {
+		audios := GetMoviePageForUser(user, page)
+		fmt.Printf("Downloading page %s...\n", page)
+		var doc *goquery.Document
+		for i := range audios.Items {
+			doc, err = goquery.NewDocumentFromReader(strings.NewReader(strings.Join(audios.Items[i], "")))
+			doc.Find("a.inline-card-portalsubmission").Each(func(i int, s *goquery.Selection) {
+				url, exists := s.Attr("href")
+				if !exists {
+					return
+				}
+				DownloadHighestQualityVideo(url)
+			})
+		}
+		if audios.LoadMore == "" {
+			break
+		} else {
+			pageInt, _ := strconv.Atoi(page)
+			page = strconv.Itoa(pageInt + 1)
+		}
+	}
+	return err
+}
+
 func DownloadAllUserAssets(user string) {
 	DownloadAllAudioOfUser(user)
 	DownloadAllArtOfUser(user)
+	DownloadAllMoviesOfUser(user)
 }

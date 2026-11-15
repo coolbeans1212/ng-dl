@@ -31,6 +31,7 @@ func main() {
 	case strings.Contains(url, "/playlist/") || strings.Contains(url, "/series/") || strings.Contains(url, "/collection/"):
 		scraper.DownloadAllSongsInPlaylistWithMetadata(url, cliFlags)
 		scraper.DownloadAllMoviesInPlaylistWithMetadata(url, cliFlags)
+		scraper.DownloadAllArtInPlaylistWithMetadata(url, cliFlags)
 	case strings.Contains(url, "/portal/view/"):
 		scraper.DownloadVideo(url, cliFlags)
 	case strings.Contains(url, "/art/view/"):

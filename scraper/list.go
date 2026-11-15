@@ -106,3 +106,14 @@ func DownloadAllMoviesInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFl
 		DownloadVideo(videoList["1"][i].Url, cliFlags)
 	}
 }
+
+func DownloadAllArtInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags) {
+	artList := GetLinksFromPlaylist(urlStr)
+	if len(artList["4"]) == 0 {
+		return
+	}
+	fmt.Printf("Downloading %s artworks...\n", strconv.Itoa(len(artList["4"])))
+	for i := range artList["4"] {
+		DownloadArtAndSaveWithMetadata(artList["4"][i].Url, cliFlags)
+	}
+}

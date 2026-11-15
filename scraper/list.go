@@ -103,6 +103,6 @@ func DownloadAllMoviesInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFl
 	}
 	fmt.Printf("Downloading %s videos...\n", strconv.Itoa(len(videoList["1"])))
 	for i := range videoList["1"] {
-		DownloadHighestQualityVideo(videoList["1"][i].Url, cliFlags)
+		DownloadVideo(videoList["1"][i].Url, cliFlags)
 	}
 }

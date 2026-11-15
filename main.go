@@ -32,7 +32,7 @@ func main() {
 		scraper.DownloadAllSongsInPlaylistWithMetadata(url, cliFlags)
 		scraper.DownloadAllMoviesInPlaylistWithMetadata(url, cliFlags)
 	case strings.Contains(url, "/portal/view/"):
-		scraper.DownloadHighestQualityVideo(url, cliFlags)
+		scraper.DownloadVideo(url, cliFlags)
 	case strings.Contains(url, "/art/view/"):
 		scraper.DownloadArtAndSaveWithMetadata(url, cliFlags)
 	case subdomain != "www" && subdomain != "":

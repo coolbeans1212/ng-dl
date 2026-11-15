@@ -173,7 +173,7 @@ func DownloadAllMoviesOfUser(user string, cliFlags flags.CliFlags) error {
 				if !exists {
 					return
 				}
-				DownloadHighestQualityVideo(url, cliFlags)
+				DownloadVideo(url, cliFlags)
 			})
 		}
 		if audios.LoadMore == "" {

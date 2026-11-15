@@ -33,13 +33,12 @@ func GetVideoUrls(urlStr string) filesystem.NGVideoList {
 	return videoList
 }
 
-func DownloadHighestQualityVideo(urlStr string, cliFlags flags.CliFlags) {
+func GetHighestResolution(videoList filesystem.NGVideoList) string {
 	highestVerticalPx := 0
 	highestResolution := "360p"
-	videoList := GetVideoUrls(urlStr)
 	if videoList.Error.Code != 0 {
 		fmt.Printf("Cannot download video: are you sure this is a video? %s", videoList.Error.Message)
-		return
+		return ""
 	}
 	for i := range videoList.Sources {
 		var verticalPx int
@@ -64,10 +63,30 @@ func DownloadHighestQualityVideo(urlStr string, cliFlags flags.CliFlags) {
 			highestResolution = i
 		}
 	}
-	highestResolutionVideo := videoList.Sources[highestResolution][0].Source
-	fmt.Printf("Downloading %s...\n", highestResolutionVideo)
-	filesystem.DownloadFileAndSave(highestResolutionVideo)
-	urlParsed, parseerr := url.Parse(highestResolutionVideo)
+	return highestResolution
+}
+
+func DownloadVideo(urlStr string, cliFlags flags.CliFlags) {
+	videoList := GetVideoUrls(urlStr)
+	var videoResolution string
+	if cliFlags.Resolution == "highest" {
+		videoResolution = GetHighestResolution(videoList)
+	} else {
+		videoResolution = cliFlags.Resolution
+	}
+	var video string
+	sources, exists := videoList.Sources[videoResolution]
+	if exists && len(sources) > 0 {
+		video = videoList.Sources[videoResolution][0].Source
+	} else {
+		videoResolution = GetHighestResolution(videoList)
+		video = videoList.Sources[videoResolution][0].Source
+		fmt.Printf("Could not find resolution %[1]s, defaulting to %[2]s.\n", cliFlags.Resolution, videoResolution)
+	}
+
+	fmt.Printf("Downloading %s...\n", video)
+	filesystem.DownloadFileAndSave(video)
+	urlParsed, parseerr := url.Parse(video)
 	if parseerr != nil {
 		fmt.Printf("Could not get the file name: %s\n", parseerr)
 		return
@@ -76,10 +95,14 @@ func DownloadHighestQualityVideo(urlStr string, cliFlags flags.CliFlags) {
 	if err != nil {
 		fmt.Println("Could not get the current directory.")
 	} else {
-		fmt.Println("Writing metadata...")
-		filesystem.WriteMetadataToMP4File(path.Join(dir, path.Base(urlParsed.Path)), videoList)
+		if !cliFlags.DontFixMetadata {
+			fmt.Println("Writing metadata...")
+			filesystem.WriteMetadataToMP4File(path.Join(dir, path.Base(urlParsed.Path)), videoList)
+		}
 	}
-	newName := fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id))
-	fmt.Printf("Renaming file to %s.mp4...\n", newName)
-	filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
+	if !cliFlags.DontRename {
+		newName := fmt.Sprintf("%s - %s (%s)", videoList.Author, videoList.Title, strconv.Itoa(videoList.Id))
+		fmt.Printf("Renaming file to %s.mp4...\n", newName)
+		filesystem.RenameFileInCurrentDirectoryAndPreserveExtension(path.Base(urlParsed.Path), newName)
+	}
 }

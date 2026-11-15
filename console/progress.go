@@ -57,13 +57,14 @@ func GetTermWidth() int {
 func RefreshProgress() {
 	const BACKGROUND = "44" // cyan
 	const FOREGROUND = "33" // yellow
+	const MAXACTIVITIES = 4
 	var buf bytes.Buffer
 	out := colorable.NewColorableStdout()
 	buf.WriteString("\033[s") // save cursor pos
 
 	// clear the previous progress bars
 	buf.WriteString("\033[1;1H") // set cursor to (1, 1)
-	for i := 0; i < progressesBefore*3+3; i++ {
+	for i := 0; i < minInt(progressesBefore, MAXACTIVITIES)*3+3; i++ {
 		buf.WriteString("\033[2K")
 		if i < progressesBefore*3+2 {
 			buf.WriteString("\033[1B")
@@ -73,8 +74,8 @@ func RefreshProgress() {
 	// draw the next progress bars
 	buf.WriteString("\033[1;1H") // set cursor pos to (1, 1)
 	var lines int
-	if len(progresses) > 4 {
-		lines = 4*3 + 2
+	if len(progresses) > MAXACTIVITIES {
+		lines = MAXACTIVITIES*3 + 2
 	} else {
 		lines = len(progresses)*3 + 2
 	}
@@ -124,8 +125,8 @@ func RefreshProgress() {
 			}
 			buf.WriteString("]\n")
 		}
-		if len(progresses) > 3 {
-			buf.WriteString(strconv.Itoa(len(progresses)-4) + " activities not shown...")
+		if len(progresses) > MAXACTIVITIES {
+			buf.WriteString(strconv.Itoa(len(progresses)-MAXACTIVITIES) + " activities not shown...")
 		}
 		progressesBefore = len(progresses)
 	} else {

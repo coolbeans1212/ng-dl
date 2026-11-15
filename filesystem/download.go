@@ -90,6 +90,7 @@ func DownloadAndConvertWebpToPng(url string) []byte {
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Could not fetch the album art.")
+		return nil
 	}
 	defer resp.Body.Close()
 	img, _, err := image.Decode(resp.Body)

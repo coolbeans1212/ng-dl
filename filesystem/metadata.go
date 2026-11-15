@@ -92,6 +92,9 @@ func WriteMetadataToMP3File(filepath string, song Song) {
 
 func AttachAlbumArt(path string, albumArt []byte) {
 	tag, err := id3v2.Open(path, id3v2.Options{Parse: true})
+	if albumArt == nil {
+		fmt.Printf("Album art was not given.")
+	}
 	if err != nil {
 		fmt.Printf("Could not open downloaded MP3 file for writing. The MP3 file will not contain any album art (%s).\n", err)
 		return

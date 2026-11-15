@@ -25,6 +25,13 @@ To use ng-dl, open a terminal window and navigate to the directory with the exec
 ```
 ng-dl [options] <url>
 ```
+### Command line flags
+> [!NOTE]
+> The URL to download must be after all command line flags.
+
+- `--dont-rename`: Do not rename downloaded files, keep them with the same filename as the one on the server.
+- `--dont-fix-metadata`: Do not apply fetched metadata to downloaded files. Also does not apply album art.
+- `--resolution <string>`: Requests a specific resolution for a video (e.g. 1080p). If the resolution cannot be found, it will default to the highest resolution.
 ### Example 1: Download audio
 ```
 $ ng-dl https://www.newgrounds.com/audio/listen/639309

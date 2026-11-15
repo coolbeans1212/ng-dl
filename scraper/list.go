@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 type VisualLinkSimple struct {
@@ -91,9 +93,20 @@ func DownloadAllSongsInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFla
 		return
 	}
 	fmt.Printf("Downloading %s songs...\n", strconv.Itoa(len(audioList["3"])))
+	var wg sync.WaitGroup
 	for i := range audioList["3"] {
-		DownloadSongAndSaveWithMetadata(audioList["3"][i].Url, cliFlags)
+		if !cliFlags.NoParallel {
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+				DownloadSongAndSaveWithMetadata(url, cliFlags)
+			}(audioList["3"][i].Url)
+			time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+		} else {
+			DownloadSongAndSaveWithMetadata(audioList["3"][i].Url, cliFlags)
+		}
 	}
+	wg.Wait()
 }
 
 func DownloadAllMoviesInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags) {
@@ -102,9 +115,20 @@ func DownloadAllMoviesInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFl
 		return
 	}
 	fmt.Printf("Downloading %s videos...\n", strconv.Itoa(len(videoList["1"])))
+	var wg sync.WaitGroup
 	for i := range videoList["1"] {
-		DownloadVideo(videoList["1"][i].Url, cliFlags)
+		if !cliFlags.NoParallel {
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+				DownloadVideo(url, cliFlags)
+			}(videoList["1"][i].Url)
+			time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+		} else {
+			DownloadVideo(videoList["1"][i].Url, cliFlags)
+		}
 	}
+	wg.Wait()
 }
 
 func DownloadAllArtInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags) {
@@ -113,7 +137,18 @@ func DownloadAllArtInPlaylistWithMetadata(urlStr string, cliFlags flags.CliFlags
 		return
 	}
 	fmt.Printf("Downloading %s artworks...\n", strconv.Itoa(len(artList["4"])))
+	var wg sync.WaitGroup
 	for i := range artList["4"] {
-		DownloadArtAndSaveWithMetadata(artList["4"][i].Url, cliFlags)
+		if !cliFlags.NoParallel {
+			wg.Add(1)
+			go func(url string) {
+				defer wg.Done()
+				DownloadVideo(url, cliFlags)
+			}(artList["4"][i].Url)
+			time.Sleep(time.Duration(float64(time.Second) * cliFlags.WaitBetweenParallelDownloads))
+		} else {
+			DownloadArtAndSaveWithMetadata(artList["4"][i].Url, cliFlags)
+		}
 	}
+	wg.Wait()
 }

@@ -20,6 +20,7 @@ import (
 func DownloadFileAndSaveToDir(urlStr string, directory string, cliFlags flags.CliFlags) string {
 	var filename string
 	progressid := rand.Int()
+	console.WriteProgress(progressid, "Downloading "+urlStr, -1)
 	resp, err := http.Get(urlStr)
 	if err != nil {
 		panic(err)

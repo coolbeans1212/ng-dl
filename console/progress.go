@@ -73,8 +73,8 @@ func RefreshProgress() {
 	// draw the next progress bars
 	buf.WriteString("\033[1;1H") // set cursor pos to (1, 1)
 	var lines int
-	if len(progresses) > 3 {
-		lines = 3*3 + 2
+	if len(progresses) > 4 {
+		lines = 4*3 + 2
 	} else {
 		lines = len(progresses)*3 + 2
 	}

@@ -85,7 +85,7 @@ func DownloadVideo(urlStr string, cliFlags flags.CliFlags) {
 	}
 
 	fmt.Printf("Downloading %s...\n", video)
-	filesystem.DownloadFileAndSave(video)
+	filesystem.DownloadFileAndSave(video, cliFlags)
 	urlParsed, parseerr := url.Parse(video)
 	if parseerr != nil {
 		fmt.Printf("Could not get the file name: %s\n", parseerr)

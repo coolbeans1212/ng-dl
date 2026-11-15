@@ -3,19 +3,21 @@ package filesystem
 import (
 	"bytes"
 	"fmt"
-	_ "golang.org/x/image/webp"
 	"image"
 	"image/png"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"ng-dl/console"
+	"ng-dl/flags"
 	"os"
 	"path"
 	"path/filepath"
+
+	_ "golang.org/x/image/webp"
 )
 
-func DownloadFileAndSaveToDir(urlStr string, directory string) string {
+func DownloadFileAndSaveToDir(urlStr string, directory string, cliFlags flags.CliFlags) string {
 	var filename string
 	progressid := rand.Int()
 	resp, err := http.Get(urlStr)
@@ -38,7 +40,9 @@ func DownloadFileAndSaveToDir(urlStr string, directory string) string {
 					percent = 100
 				}
 			}
-			console.WriteProgress(progressid, "Downloading "+urlStr, percent)
+			if !cliFlags.NoProgressBar {
+				console.WriteProgress(progressid, "Downloading "+urlStr, percent)
+			}
 			data = append(data, buffer[:n]...)
 		}
 		if err != nil {
@@ -57,26 +61,28 @@ func DownloadFileAndSaveToDir(urlStr string, directory string) string {
 	if err != nil {
 		fmt.Println("Could not save the file.")
 	}
-	console.ClearProgress(progressid)
+	if !cliFlags.NoProgressBar {
+		console.ClearProgress(progressid)
+	}
 	return out
 }
 
-func DownloadFileAndSave(urlStr string) string {
+func DownloadFileAndSave(urlStr string, cliFlags flags.CliFlags) string {
 	dir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	return DownloadFileAndSaveToDir(urlStr, dir)
+	return DownloadFileAndSaveToDir(urlStr, dir, cliFlags)
 
 }
 
-func DownloadFileAndSaveInRelativeDir(urlStr string, relativeDirectory string) string {
+func DownloadFileAndSaveInRelativeDir(urlStr string, relativeDirectory string, cliFlags flags.CliFlags) string {
 	currentdir, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 	dir := filepath.Join(currentdir, relativeDirectory)
-	return DownloadFileAndSaveToDir(urlStr, dir)
+	return DownloadFileAndSaveToDir(urlStr, dir, cliFlags)
 }
 
 func DownloadAndConvertWebpToPng(url string) []byte {

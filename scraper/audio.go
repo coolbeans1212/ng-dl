@@ -94,7 +94,7 @@ func GetAudioMetadata(url string) filesystem.Song {
 
 func DownloadSongAndSaveWithMetadata(url string, cliFlags flags.CliFlags) {
 	metadata := GetAudioMetadata(url)
-	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL)
+	filepath := filesystem.DownloadFileAndSave(metadata.DownloadURL, cliFlags)
 	if !cliFlags.DontFixMetadata {
 		filesystem.WriteMetadataToMP3File(filepath, metadata)
 		filesystem.AttachAlbumArt(filepath, filesystem.DownloadAndConvertWebpToPng(metadata.AlbumArtURL))

@@ -31,7 +31,10 @@ ng-dl [options] <url>
 
 - `--dont-rename`: Do not rename downloaded files, keep them with the same filename as the one on the server.
 - `--dont-fix-metadata`: Do not apply fetched metadata to downloaded files. Also does not apply album art.
-- `--resolution <string>`: Requests a specific resolution for a video (e.g. 1080p). If the resolution cannot be found, it will default to the highest resolution.
+- `--resolution <text>`: Requests a specific resolution for a video (e.g. 1080p). If the resolution cannot be found, it will default to the highest resolution.
+- `--no-progress-bar`: Hides the top progress bar.
+- `--no-parallel`: Does not download files concurrently; waits for one download to finish before starting another.
+- `--parallel-wait <number>`: When downloading files concurrently, how long to wait between starting each download.
 ### Example 1: Download audio
 ```
 $ ng-dl https://www.newgrounds.com/audio/listen/639309

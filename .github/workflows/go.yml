@@ -1,0 +1,49 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: windows
+            goarch: 386
+            output: ng-dl.exe
+          - goos: windows
+            goarch: 386
+            output: ng-dl-windows-386.exe
+          - goos: windows
+            goarch: amd64
+            output: ng-dl-windows-amd64.exe
+          - goos: linux
+            goarch: 386
+            output: ng-dl-linux-386
+          - goos: linux
+            goarch: amd64
+            output: ng-dl-linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20.14'
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: go build -v -o ${{ matrix.output }} .
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: ${{ matrix.output }}
